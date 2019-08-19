@@ -13,18 +13,18 @@ type Queue = [(Vertex, Int)]
 -- to the target once the target is visited. If the target is unreachable
 -- from the source, a distance of -1 is returned.
 bfs :: Vertex -> Vertex -> Graph -> Int
-bfs s t g = bfs_worker [(s, 0)] (S.singleton s) g t
+bfs src targ g = bfs_worker [(src, 0)] (S.singleton src) g targ
 
 bfs_worker :: Queue -> Seen -> Graph -> Vertex -> Int
 bfs_worker [] _ _ _ = -1
-bfs_worker ((v, d):vs) seen g t = case v == t of
+bfs_worker ((v, d):vs) seen g targ = case v == targ of
     True -> d
     False -> case M.lookup v g of
                 Nothing -> error "uninitialized edge list for vertex"
                 Just neighbors ->
                     let fresh = filter ((flip S.notMember) seen) neighbors in
                     let add_to_queue = map (\n -> (n, d + 1)) fresh in
-                    bfs_worker (vs ++ add_to_queue) (S.union (S.fromList fresh) seen) g t
+                    bfs_worker (vs ++ add_to_queue) (S.union (S.fromList fresh) seen) g targ
 
 -- Utilities for graph creation
 type Edge = (Vertex, Vertex)
